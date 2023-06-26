@@ -1,5 +1,5 @@
 import { UserOutlined, UploadOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { Menu, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'
 
@@ -7,6 +7,7 @@ const Navbar = () => {
     const router = useRouter()
     const [current, setCurrent] = useState('mail');
     const [value, setValue] = useState({});
+    console.log(value)
     useEffect(() => {
         const storedValue = localStorage.getItem('user');
         setValue(JSON.parse(storedValue))
@@ -17,30 +18,32 @@ const Navbar = () => {
         setCurrent(e.key);
     };
     return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal"
-        items={[
+        items={router?.pathname === "/" ? [
+            {
+                key: '1',
+                icon: <UserOutlined />,
+                label: <span style={{ fontSize: '16px', fontWeight: 'bolder' }}>Web Design By Top.</span>,
+            }
+        ] : value.role === 'admin' ? [
             {
                 key: '1',
                 icon: <UserOutlined onClick={() => {
                     localStorage.removeItem('user')
                     router.push('/')
                 }} />,
-                label: <span>{value?.name}</span>,
-            },
+                label: <span>{value?.name + ' ' + value.role}</span>,
+            }
+        ] : value.role === 'user' ? [
             {
-                key: '2',
-                icon: <VideoCameraOutlined />,
-                label: 'nav 2',
-            },
-            {
-                key: '3',
-                icon: <UploadOutlined />,
-                label: 'nav 3',
-            },
-            {
-                key: '4',
-                icon: <UploadOutlined />,
-                label: 'nav 3',
-            },
-        ]} />;
+                key: '1',
+                icon: <UserOutlined onClick={() => {
+                    localStorage.removeItem('user')
+                    router.push('/')
+                }} />,
+                label: <span>{value?.name + ' ' + value.role}</span>,
+            }
+        ]
+            : null
+        } />;
 };
 export default Navbar;
